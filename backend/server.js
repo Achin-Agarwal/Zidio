@@ -5,6 +5,7 @@ import helmet from "helmet";
 import xss from "xss-clean";
 import hpp from "hpp";
 import mongoSanitize from "express-mongo-sanitize";
+import nocache from "nocache";
 
 import dotenv from "dotenv";
 
@@ -19,6 +20,7 @@ app.use(cors({
 app.use(xss());
 app.use(hpp());
 app.use(mongoSanitize());
+app.use(nocache());
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
