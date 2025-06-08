@@ -6,38 +6,34 @@ import xss from "xss-clean";
 import hpp from "hpp";
 import mongoSanitize from "express-mongo-sanitize";
 import nocache from "nocache";
+import config from "./config.js";
 
-import dotenv from "dotenv";
-
+import dotenv, { config } from "dotenv";
 dotenv.config();
+
 const app = express();
 
 app.use(helmet());
-app.use(cors({
-  origin: 'https://yourdomain.com',
-  methods: ['GET', 'POST']
-}));
 app.use(xss());
 app.use(hpp());
 app.use(mongoSanitize());
 app.use(nocache());
+app.use((req, res, next) => {
+    console.log(req.url, req.method);
+    next();
+})
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      callback(null, origin || "*");
+    },
+    credentials: true,
+    methods: ["GET", "POST"],
+  })
+);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
-
-mongoose
-  .connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-  });
-
-app.listen(PORT, () => {
+app.listen(config.server.PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
