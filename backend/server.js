@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
-import mongoose from "mongoose";
 import helmet from "helmet";
 import xss from "xss-clean";
 import hpp from "hpp";
 import mongoSanitize from "express-mongo-sanitize";
 import nocache from "nocache";
 import config from "./config.js";
+import responseHandler from "./middlewares/responseHandler.js";
 
 import dotenv, { config } from "dotenv";
 dotenv.config();
@@ -18,6 +18,7 @@ app.use(xss());
 app.use(hpp());
 app.use(mongoSanitize());
 app.use(nocache());
+app.use(responseHandler);
 app.use((req, res, next) => {
     console.log(req.url, req.method);
     next();
