@@ -1,50 +1,37 @@
 import { verifyToken } from '../utils/jwtFunct.js';
 import config from '../config/config.js';
 
-export default function checkAuth(role) {
-    return (req, res, next) => {
-        let token = null;
+export default function checkAuth(requiredRole) {
+  return (req, res, next) => {
+    try {
+      const authHeader = req.headers['authorization'];
 
-        if (req.headers['ismobile'] === "true" || req.headers['ismobile'] === true) {
-            const authHeader = req.headers['authorization'];
-            if (!authHeader || !authHeader.startsWith('Bearer ')) {
-                return res.error(401, 'Missing or malformed token', 'UNAUTHORIZED');
-            }
-            token = authHeader.split(' ')[1];
-        }
+      // Check for Bearer token
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.error?.(401, 'Missing or malformed token', 'UNAUTHORIZED');
+      }
 
-        else if (req.cookies?.userToken) {
-            token = req.cookies?.userToken;
-        }
+      const token = authHeader.split(' ')[1];
+      const payload = verifyToken(token);
 
-        else if (req.headers['authorization']) {
-            const authHeader = req.headers['authorization'];
-            if (!authHeader || !authHeader.startsWith('Bearer ')) {
-                return res.error(401, 'Missing or malformed token', 'UNAUTHORIZED');
-            }
-            token = authHeader.split(' ')[1];
-        }
+      // Check token validity and role
+      if (!payload || !['user', 'admin'].includes(payload.role)) {
+        return res.error?.(401, 'Invalid or expired token', 'UNAUTHORIZED');
+      }
 
-        else if (req.headers.cookie) {
-            try {
-                const userToken = req.headers?.cookie
-                    .split('; ')
-                    .find((entry) => entry.startsWith('userToken='))
-                    .split('=')[1];
-                token = userToken;
-            } catch (error) {
-                return res.error(401, 'Missing or malformed token', 'UNAUTHORIZED');
-            }
-        }
+      // Check role access
+      if (
+        requiredRole &&
+        payload.role !== requiredRole &&
+        !(requiredRole === 'user' && payload.role === 'admin') // Admin can act as user
+      ) {
+        return res.error?.(403, 'Unauthorized access', 'FORBIDDEN');
+      }
 
-        const payload = verifyToken(token);
-        if (!payload) {
-            return res.error(401, 'Invalid or expired token', 'UNAUTHORIZED');
-        }
-        if (role && (!(payload.role in config.priority) || config.priority[payload.role] < config.priority[role])) {
-            return res.error(403, 'Unauthorized access', 'FORBIDDEN');
-        }
-        req.user = payload;
-        next();
+      req.user = payload;
+      next();
+    } catch (err) {
+      return res.error?.(500, 'Authentication failed', 'INTERNAL_ERROR');
     }
+  };
 }
