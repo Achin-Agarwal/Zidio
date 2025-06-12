@@ -16,3 +16,5 @@ const excelRecordSchema = new mongoose.Schema({
 });
 
 const ExcelRecord = mongoose.model("ExcelRecord", excelRecordSchema);
+
+export default ExcelRecord;
