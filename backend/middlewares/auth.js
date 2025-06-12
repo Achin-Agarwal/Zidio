@@ -1,37 +1,46 @@
 import { verifyToken } from '../utils/jwtFunct.js';
-import config from '../config/config.js';
 
 export default function checkAuth(requiredRole) {
   return (req, res, next) => {
     try {
       const authHeader = req.headers['authorization'];
 
-      // Check for Bearer token
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.error?.(401, 'Missing or malformed token', 'UNAUTHORIZED');
+        return res.status(401).json({
+          error: 'Missing or malformed token',
+          code: 'UNAUTHORIZED',
+        });
       }
 
       const token = authHeader.split(' ')[1];
       const payload = verifyToken(token);
 
-      // Check token validity and role
       if (!payload || !['user', 'admin'].includes(payload.role)) {
-        return res.error?.(401, 'Invalid or expired token', 'UNAUTHORIZED');
+        return res.status(401).json({
+          error: 'Invalid or expired token',
+          code: 'UNAUTHORIZED',
+        });
       }
 
-      // Check role access
       if (
         requiredRole &&
         payload.role !== requiredRole &&
-        !(requiredRole === 'user' && payload.role === 'admin') // Admin can act as user
+        !(requiredRole === 'user' && payload.role === 'admin')
       ) {
-        return res.error?.(403, 'Unauthorized access', 'FORBIDDEN');
+        return res.status(403).json({
+          error: 'Unauthorized access',
+          code: 'FORBIDDEN',
+        });
       }
 
       req.user = payload;
       next();
     } catch (err) {
-      return res.error?.(500, 'Authentication failed', 'INTERNAL_ERROR');
+      console.error('Auth error:', err);
+      return res.status(500).json({
+        error: 'Authentication failed',
+        code: 'INTERNAL_ERROR',
+      });
     }
   };
 }
