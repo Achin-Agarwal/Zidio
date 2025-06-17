@@ -1,11 +1,13 @@
 import express from "express";
 import { safeHandler } from "../middlewares/safeHandler.js";
-import { userBaseSchema,userLoginSchema } from "../validators/auth-validators.js";
+import {
+  userBaseSchema,
+  userLoginSchema,
+} from "../validators/auth-validators.js";
 import { generateToken } from "../utils/jwtFunct.js";
 import ApiError from "../utils/errorClass.js";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
-import ExcelRecord from "../models/ExcelRecord.js";
 
 const router = express.Router();
 
@@ -56,12 +58,20 @@ router.post(
 
     const user = await User.findOne({ email });
     if (!user) {
-      throw new ApiError(404, "Invalid email or password", "INVALID_CREDENTIALS");
+      throw new ApiError(
+        404,
+        "Invalid email or password",
+        "INVALID_CREDENTIALS"
+      );
     }
 
     const isMatch = bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new ApiError(401, "Invalid email or password", "INVALID_CREDENTIALS");
+      throw new ApiError(
+        401,
+        "Invalid email or password",
+        "INVALID_CREDENTIALS"
+      );
     }
 
     user.lastLogin = new Date();
@@ -87,18 +97,6 @@ router.get(
   safeHandler(async (req, res) => {
     const users = await User.find({}, "-password");
     res.status(200).json({ users });
-  })
-);
-
-router.delete(
-  "/delete/:id",
-  safeHandler(async(req,res)=> {
-    const record=ExcelRecord.findById(req.params.id);
-    if (!record) {
-      throw new ApiError(404, "Record not found", "RECORD_NOT_FOUND");
-    }
-    await ExcelRecord.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Record deleted successfully" });
   })
 );
 

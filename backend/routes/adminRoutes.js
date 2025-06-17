@@ -1,14 +1,13 @@
 import express from "express";
 import ExcelRecord from "../models/ExcelRecord.js";
+import User from "../models/User.js";
 import checkAuth from "../middlewares/auth.js";
-import checkRole from "../middlewares/checkRole.js";
 import { safeHandler } from "../middlewares/safeHandler.js";
 
 const router = express.Router();
 
 router.get(
-  "/au",
-  checkAuth("admin"),
+  "/audit",
   safeHandler(async (req, res) => {
     try {
       const recordsGroupedByUser = await ExcelRecord.aggregate([
@@ -57,4 +56,15 @@ router.get(
   })
 );
 
+router.delete(
+  "/delete/:id",
+  safeHandler(async (req, res) => {
+    const record = await User.findById(req.params.id);
+    if (!record) {
+      throw new ApiError(404, "User not found", "USER_NOT_FOUND");
+    }
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "User deleted successfully" });
+  })
+);
 export default router;
