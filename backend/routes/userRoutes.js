@@ -2,7 +2,6 @@ import express from "express";
 import { safeHandler } from "../middlewares/safeHandler.js";
 import {
   userBaseSchema,
-  userLoginSchema,
 } from "../validators/auth-validators.js";
 import { generateToken } from "../utils/jwtFunct.js";
 import ApiError from "../utils/errorClass.js";
@@ -37,25 +36,18 @@ router.post(
       role,
       lastLogin: new Date(),
     });
+    const token = generateToken({ id: newUser._id, role: newUser.role });
 
     res
       .status(201)
-      .json({ message: "User created successfully", user: newUser });
+      .json({ message: "User created successfully", user: newUser, token });
   })
 );
 
 router.post(
   "/login",
   safeHandler(async (req, res) => {
-    const parsed = userLoginSchema.safeParse(req.body);
-    if (!parsed.success) {
-      return res
-        .status(400)
-        .json({ errors: parsed.error.flatten().fieldErrors });
-    }
-
-    const { email, password } = parsed.data;
-
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       throw new ApiError(
@@ -78,7 +70,6 @@ router.post(
     await user.save();
 
     const token = generateToken({ id: user._id, role: user.role });
-
     res.status(200).json({
       message: "Login successful",
       token,
