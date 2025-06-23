@@ -45,7 +45,7 @@ const Sidebar = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
-      setGetName(user.name);
+      setGetName(user);
     }
   }, []);
 
