@@ -22,11 +22,12 @@ export default function AuthForm() {
       console.log("Login response:", response.data);
       const token = response.data.token;
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(response.data.user.name));
       if (token) {
         if (response.data.user.role === "admin") {
-          navigate("/admindashboard");
+          navigate("/dashboard", { state: { user: response.data.user } });
         } else {
-          navigate("/userdashboard");
+          navigate("/dashboard", { state: { user: response.data.user } });
         }
       } else {
         navigate("/");
