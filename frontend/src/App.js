@@ -16,6 +16,8 @@ import FAQ from "./scenes/faq";
 import Geography from "./scenes/geography";
 import Calendar from "./scenes/calendar";
 import AuthForm from "./AuthForm";
+import Upload from './components/Upload';
+import ChartViewer from './components/ChartViewer';
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -41,6 +43,9 @@ function App() {
               <Route path="/pie" element={<Pie />} />
               <Route path="/line" element={<Line />} />
               <Route path="/geography" element={<Geography />} />
+              <Route path='/upload' element={<Upload/>}/>
+              <Route path='/chart' element={<ChartViewer/>}/>
+            
             </Routes>
           </main>
         </div>
