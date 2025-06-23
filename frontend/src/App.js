@@ -15,6 +15,7 @@ import Pie from "./scenes/pie";
 import FAQ from "./scenes/faq";
 import Geography from "./scenes/geography";
 import Calendar from "./scenes/calendar";
+import AuthForm from "./AuthForm";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -28,7 +29,8 @@ function App() {
           <main className="content">
             <Topbar />
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<AuthForm />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />
