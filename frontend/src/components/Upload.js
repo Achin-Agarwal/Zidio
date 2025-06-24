@@ -53,63 +53,74 @@ const Upload = () => {
   };
 
   const handleUpload = async () => {
-    if (!file) return alert("Please choose a file");
+  if (!file) return alert("Please choose a file");
 
-    const formData = new FormData();
-    formData.append("excelsheet", file);
+  const formData = new FormData();
+  formData.append("file", file);
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const res = await axios.post("http://localhost:5000/api/upload/excel", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const res = await axios.post("http://localhost:5000/upload/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const { message, summary, data: parsedData, columns: parsedColumns } = res.data;
-      setUploadMsg(message);
-      setSummary(summary);
+    const { message, record } = res.data;
 
-      navigate("/chart", { state: { data: parsedData, columns: parsedColumns } });
+    const parsedData = record?.data || [];
+    const parsedColumns = parsedData.length > 0 ? Object.keys(parsedData[0]) : [];
 
-      const updated = await axios.get("http://localhost:5000/api/upload/history", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setHistory(updated.data.uploads || []);
-    } catch (error) {
-      console.error("Upload failed:", error);
-      setUploadMsg("Upload failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setUploadMsg(message);
+
+    navigate("/chart", { state: { data: parsedData, columns: parsedColumns } });
+    const userId = JSON.parse(localStorage.getItem("id"));
+
+    const updated = await axios.get(`http://localhost:5000/upload/myfiles/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setHistory(updated.data || []);
+  } catch (error) {
+    console.error("Upload failed:", error);
+    setUploadMsg("Upload failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleHistoryClick = (entry) => {
-    if (entry.rows && entry.summary?.columns) {
-      navigate("/chart", { state: { data: entry.rows, columns: entry.summary.columns } });
-    } else {
-      alert("No data available for this file.");
-    }
-  };
+  const data = entry.data || [];
+  const columns = data.length > 0 ? Object.keys(data[0]) : [];
 
-  const handleClearHistory = async () => {
-    if (!window.confirm("Are you sure you want to clear your upload history?")) return;
+  if (data.length === 0 || columns.length === 0) {
+    alert("No data available for this file.");
+    return;
+  }
 
-    try {
-      setBackupHistory(history); 
-      await axios.delete("http://localhost:5000/api/upload/history", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setHistory([]);
-      setShowUndo(true);
-      setUploadMsg("Upload history cleared successfully. You can undo this.");
-    } catch (error) {
-      console.error("Failed to clear history:", error);
-      setUploadMsg("Failed to clear history");
-    }
-  };
+  navigate("/chart", { state: { data, columns } });
+};
+
+
+  // const handleClearHistory = async () => {
+  //   if (!window.confirm("Are you sure you want to clear your upload history?")) return;
+
+  //   try {
+  //     setBackupHistory(history); 
+  //     await axios.delete("http://localhost:5000/api/upload/history", {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     setHistory([]);
+  //     setShowUndo(true);
+  //     setUploadMsg("Upload history cleared successfully. You can undo this.");
+  //   } catch (error) {
+  //     console.error("Failed to clear history:", error);
+  //     setUploadMsg("Failed to clear history");
+  //   }
+  // };
 
   const handleUndoClear = async () => {
     try {
@@ -176,19 +187,19 @@ const Upload = () => {
 
       {history.length > 0 && (
         <Box mt={6}>
-          <Box display="flex" alignItems="center" justifyContent="space-between">
+          {/* <Box display="flex" alignItems="center" justifyContent="space-between">
             <Typography variant="h5" gutterBottom>🕓 Upload History</Typography>
             <Button variant="outlined" color="error" onClick={handleClearHistory}>
               Clear History
             </Button>
-          </Box>
+          </Box> */}
 
           <List>
             {history.map((entry, index) => (
               <React.Fragment key={entry._id || index}>
                 <ListItem button onClick={() => handleHistoryClick(entry)}>
                   <ListItemText
-                    primary={`📁 ${entry.fileName}`}
+                    primary={`📁 ${entry.fileName || entry._id}`}
                     secondary={
                       <>
                         <Typography component="span" variant="body2" color="text.primary">

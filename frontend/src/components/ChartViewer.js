@@ -15,7 +15,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointEleme
 const ChartViewer = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { data, columns } = location.state || { data: [], columns: [] };
+  const { data = [], columns = [] } = location.state || {};
 
   const [xKey, setXKey] = useState(columns[0] || "");
   const [yKeys, setYKeys] = useState(columns[1] ? [columns[1]] : []);
