@@ -27,7 +27,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import ImageIcon from "@mui/icons-material/Image";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-
+import InsertChartIcon from '@mui/icons-material/InsertChart';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -185,7 +185,7 @@ const ChartViewer = () => {
       <Box
         sx={{
           width: 320,
-          height: 536,
+          height: 516,
           backgroundColor: "#ffffff",
           p: 3,
           overflowY: "auto",
@@ -196,11 +196,11 @@ const ChartViewer = () => {
           boxShadow: 3,
         }}
       >
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
+        <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, pb:2 }} color="black">
           🎛 Controls
         </Typography>
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel shrink={true} sx={{ color: "#000" }}>
+          <InputLabel shrink={true} sx={{ color: "#000", border:"Highlight"}}>
             X-Axis
           </InputLabel>
           <Select
@@ -218,7 +218,7 @@ const ChartViewer = () => {
         </FormControl>
 
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel shrink={true} sx={{ color: "#000" }}>
+          <InputLabel shrink={true} sx={{ color: "#000", borderColor:"black" }} >
             Y-Axis (Multi Select)
           </InputLabel>
           <Select
@@ -245,7 +245,7 @@ const ChartViewer = () => {
             value={chartType}
             onChange={(e) => setChartType(e.target.value)}
             label="Chart Type"
-            sx={{ color: "#000", backgroundColor: "#fff" }}
+            sx={{ color: "#000" }}
           >
             <MenuItem value="Bar" sx={{ color: "#000" }}>
               Bar Chart
@@ -271,30 +271,64 @@ const ChartViewer = () => {
         <Typography
           variant="subtitle1"
           gutterBottom
+          color="blue"
           sx={{ mt: 3, display: "flex", alignItems: "center", gap: 1 }}
         >
           <ArrowCircleDownIcon />
           Download
         </Typography>
 
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={handleDownloadPNG}
-          sx={{ mb: 1 }}
-        >
-          <ImageIcon /> Download PNG
-        </Button>
-        <Button fullWidth variant="outlined" onClick={handleDownloadPDF}>
-          <PictureAsPdfIcon />
-          Download PDF
-        </Button>
+   
+
+<Button
+  fullWidth
+  variant="outlined"
+  onClick={handleDownloadPNG}
+  sx={{
+    mb: 1,
+    border: "2px solid",
+    borderColor: "primary.main",
+    color: "primary.main",
+    "&:hover": {
+      backgroundColor: "primary.dark",
+      color: "white",
+      borderColor: "primary.dark",
+    },
+  }}
+>
+  <ImageIcon sx={{ mr: 1 }} />
+  Download PNG
+</Button>
+
+<Button
+  fullWidth
+  variant="outlined"
+  onClick={handleDownloadPDF}
+  sx={{
+    mb: 1,
+    border: "2px solid",
+    borderColor: "primary.main",
+    color: "primary.main",
+    "&:hover": {
+      backgroundColor: "primary.dark",
+      color: "white",
+      borderColor: "primary.dark",
+    },
+  }}
+>
+  <PictureAsPdfIcon sx={{ mr: 1 }} />
+  Download PDF
+</Button>
+
       </Box>
 
       {/* Chart Area */}
       <Box sx={{ flex: 2, overflow: "auto", p: 2, pt: 0 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
-          📊 Chart Viewer
+        <Typography  variant="h3"
+          gutterBottom
+          color="red"
+          sx={{ mt: 3, display: "flex", alignItems: "center", gap: 1 }} >
+          <InsertChartIcon/>CHART VIEW
         </Typography>
 
         {showSingleOnlyWarning && (
