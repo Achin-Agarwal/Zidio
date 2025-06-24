@@ -307,22 +307,22 @@ const ChartViewer = () => {
       },
     }}
   >
-    <MenuItem value="Bar" sx={{ color: "#000" }}>
+    <MenuItem value="Bar" >
       Bar Chart
     </MenuItem>
-    <MenuItem value="Column" sx={{ color: "#000" }}>
+    <MenuItem value="Column" >
       Column Chart
     </MenuItem>
-    <MenuItem value="Line" sx={{ color: "#000" }}>
+    <MenuItem value="Line">
       Line Chart
     </MenuItem>
-    <MenuItem value="Area" sx={{ color: "#000" }}>
+    <MenuItem value="Area">
       Area Chart
     </MenuItem>
-    <MenuItem value="Pie" sx={{ color: "#000" }}>
+    <MenuItem value="Pie">
       Pie Chart
     </MenuItem>
-    <MenuItem value="Scatter" sx={{ color: "#000" }}>
+    <MenuItem value="Scatter">
       Scatter Chart
     </MenuItem>
   </Select>
