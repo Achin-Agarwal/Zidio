@@ -200,15 +200,34 @@ const ChartViewer = () => {
           🎛 Controls
         </Typography>
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel shrink={true} sx={{ color: "#000", border:"Highlight"}}>
+          <InputLabel  shrink={true}
+  sx={{
+    color: "#000",
+    border: "1px solid #90caf9",
+    borderRadius: "8px",
+    px: 1,
+    py: 0.5,
+    backgroundColor: "#e3f2fd",
+    width: "fit-content",
+    mb: 1,
+  }}>
             X-Axis
           </InputLabel>
           <Select
-            value={xKey}
-            onChange={(e) => setXKey(e.target.value)}
-            label="X-Axis"
-            sx={{ color: "#000", backgroundColor: "#fff" }}
-          >
+  value={xKey}
+  onChange={(e) => setXKey(e.target.value)}
+  label="X-Axis"
+  sx={{ color: "#000", backgroundColor: "#fff" }}
+  MenuProps={{
+    PaperProps: {
+      sx: {
+        backgroundColor: "#e3f2fd",
+        color: "#000",
+      },
+    },
+  }}
+>
+
             {columns.map((col) => (
               <MenuItem key={col} value={col} sx={{ color: "#000" }}>
                 {col}
@@ -217,56 +236,98 @@ const ChartViewer = () => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel shrink={true} sx={{ color: "#000", borderColor:"black" }} >
-            Y-Axis (Multi Select)
-          </InputLabel>
-          <Select
-            multiple
-            value={yKeys}
-            onChange={(e) => setYKeys(e.target.value)}
-            renderValue={(selected) => selected.join(", ")}
-            label="Y-Axis (Multi Select)"
-            sx={{ color: "#000", backgroundColor: "#fff" }}
-          >
-            {columns.map((col) => (
-              <MenuItem key={col} value={col} sx={{ color: "#000" }}>
-                {col}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <FormControl fullWidth sx={{ mb: 2 }}>
+  <InputLabel
+    shrink={true}
+    sx={{
+      color: "#000",
+      border: "1px solid #90caf9",
+      borderRadius: "8px",
+      px: 1,
+      py: 0.5,
+      backgroundColor: "#e3f2fd",
+      width: "fit-content",
+      mb: 1,
+    }}
+  >
+    Y-Axis (Multi Select)
+  </InputLabel>
+  <Select
+    multiple
+    value={yKeys}
+    onChange={(e) => setYKeys(e.target.value)}
+    renderValue={(selected) => selected.join(", ")}
+    label="Y-Axis (Multi Select)"
+    sx={{ color: "#000", backgroundColor: "#fff" }}
+    MenuProps={{
+      PaperProps: {
+        sx: {
+          backgroundColor: "#e3f2fd",
+          color: "#000",
+        },
+      },
+    }}
+  >
+    {columns.map((col) => (
+      <MenuItem key={col} value={col} sx={{ color: "#000" }}>
+        {col}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+
 
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel shrink={true} sx={{ color: "#000" }}>
-            Chart Type
-          </InputLabel>
-          <Select
-            value={chartType}
-            onChange={(e) => setChartType(e.target.value)}
-            label="Chart Type"
-            sx={{ color: "#000" }}
-          >
-            <MenuItem value="Bar" sx={{ color: "#000" }}>
-              Bar Chart
-            </MenuItem>
-            <MenuItem value="Column" sx={{ color: "#000" }}>
-              Column Chart
-            </MenuItem>
-            <MenuItem value="Line" sx={{ color: "#000" }}>
-              Line Chart
-            </MenuItem>
-            <MenuItem value="Area" sx={{ color: "#000" }}>
-              Area Chart
-            </MenuItem>
-            <MenuItem value="Pie" sx={{ color: "#000" }}>
-              Pie Chart
-            </MenuItem>
-            <MenuItem value="Scatter" sx={{ color: "#000" }}>
-              Scatter Chart
-            </MenuItem>
-          </Select>
-        </FormControl>
+  <InputLabel
+    shrink={true}
+    sx={{
+      color: "#000",
+      border: "1px solid #90caf9",
+      borderRadius: "8px",
+      px: 1,
+      py: 0.5,
+      backgroundColor: "#e3f2fd",
+      width: "fit-content",
+      mb: 1,
+    }}
+  >
+    Chart Type
+  </InputLabel>
+  <Select
+    value={chartType}
+    onChange={(e) => setChartType(e.target.value)}
+    label="Chart Type"
+    sx={{ color: "#000", backgroundColor: "#fff" }}
+    MenuProps={{
+      PaperProps: {
+        sx: {
+          backgroundColor: "#e3f2fd",
+          color: "#000",
+        },
+      },
+    }}
+  >
+    <MenuItem value="Bar" sx={{ color: "#000" }}>
+      Bar Chart
+    </MenuItem>
+    <MenuItem value="Column" sx={{ color: "#000" }}>
+      Column Chart
+    </MenuItem>
+    <MenuItem value="Line" sx={{ color: "#000" }}>
+      Line Chart
+    </MenuItem>
+    <MenuItem value="Area" sx={{ color: "#000" }}>
+      Area Chart
+    </MenuItem>
+    <MenuItem value="Pie" sx={{ color: "#000" }}>
+      Pie Chart
+    </MenuItem>
+    <MenuItem value="Scatter" sx={{ color: "#000" }}>
+      Scatter Chart
+    </MenuItem>
+  </Select>
+</FormControl>
+
 
         <Typography
           variant="subtitle1"
