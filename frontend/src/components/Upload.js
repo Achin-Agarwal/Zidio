@@ -33,10 +33,13 @@ const Upload = () => {
     const fetchHistory = async () => {
       if (!token) return;
       try {
-        const res = await axios.get("http://localhost:5000/api/upload/history", {
+        const userId = JSON.parse(localStorage.getItem("id"));
+        console.log(userId)
+        const res = await axios.get(`http://localhost:5000/upload/myfiles/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setHistory(res.data.uploads || []);
+        console.log("Upload history fetched:", res.data);
+        setHistory(res.data || []);
       } catch (error) {
         console.error("Failed to fetch upload history:", error);
       }

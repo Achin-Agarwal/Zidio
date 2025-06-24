@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { url } from "./url";
 import { useNavigate } from "react-router-dom";
+import "./AuthForm.css";
 
 export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -22,7 +23,8 @@ export default function AuthForm() {
       console.log("Login response:", response.data);
       const token = response.data.token;
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(response.data.user.name));
+      localStorage.setItem("name", JSON.stringify(response.data.user.name));
+      localStorage.setItem("id", JSON.stringify(response.data.user.id));
       if (token) {
         if (response.data.user.role === "admin") {
           navigate("/dashboard", { state: { user: response.data.user } });
@@ -63,7 +65,7 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="container">
+    <div className="f-container">
       <div className="form-container">
         <div className="form-toggle">
           <button

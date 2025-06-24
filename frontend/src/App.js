@@ -1,6 +1,6 @@
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
@@ -21,15 +21,19 @@ import ChartViewer from './components/ChartViewer';
 
 function App() {
   const [theme, colorMode] = useMode();
+  const location = useLocation();
+
+  // Only show Sidebar and Topbar if NOT on the login/signup page
+  const isAuthPage = location.pathname === "/";
 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          <Sidebar />
+          {!isAuthPage && <Sidebar />}
           <main className="content">
-            <Topbar />
+            {!isAuthPage && <Topbar />}
             <Routes>
               <Route path="/" element={<AuthForm />} />
               <Route path="/dashboard" element={<Dashboard />} />
@@ -43,9 +47,8 @@ function App() {
               <Route path="/pie" element={<Pie />} />
               <Route path="/line" element={<Line />} />
               <Route path="/geography" element={<Geography />} />
-              <Route path='/upload' element={<Upload/>}/>
-              <Route path='/chart' element={<ChartViewer/>}/>
-            
+              <Route path='/upload' element={<Upload />} />
+              <Route path='/chart' element={<ChartViewer />} />
             </Routes>
           </main>
         </div>
