@@ -53,9 +53,11 @@ export default function AuthForm() {
       console.log("Signup response:", response.data);
       const token = response.data.token;
       localStorage.setItem("token", token);
+      localStorage.setItem("name", JSON.stringify(response.data.user.name));
+      localStorage.setItem("id", JSON.stringify(response.data.user.id));
+      localStorage.setItem("role", JSON.stringify(response.data.user.role));
       if (token) {
-        
-          navigate("/userdashboard");
+          navigate("/dashboard", { state: { user: response.data.user } });
       } else {
         navigate("/");
       }
