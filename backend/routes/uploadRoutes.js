@@ -47,12 +47,6 @@ router.get(
     try {
       const record = await ExcelRecord.findById(req.params.id);
       if (!record) return res.status(404).json({ error: "File not found" });
-      if (
-        req.user.role !== "admin" &&
-        record.uploadedBy.toString() !== req.user.id.toString()
-      ) {
-        return res.status(403).json({ error: "Unauthorized" });
-      }
       const jsonData = record.data;
       if (!jsonData || jsonData.length === 0) {
         return res.status(400).json({ error: "No data to export" });

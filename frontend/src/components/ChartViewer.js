@@ -1,16 +1,43 @@
 import React, { useState, useRef } from "react";
-import { Box, FormControl, InputLabel, MenuItem, Select, Typography, Button,} from "@mui/material";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+  Button,
+} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import {  Chart as ChartJS,  CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend,} from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import WarningIcon from '@mui/icons-material/Warning';
-import ImageIcon from '@mui/icons-material/Image';
-import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import WarningIcon from "@mui/icons-material/Warning";
+import ImageIcon from "@mui/icons-material/Image";
+import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  ArcElement,
+  Tooltip,
+  Legend
+);
 
 const ChartViewer = () => {
   const location = useLocation();
@@ -26,7 +53,7 @@ const ChartViewer = () => {
     return (
       <Box p={4} sx={{ textAlign: "center" }}>
         <Typography color="error" variant="h6">
-           No chart data found.
+          No chart data found.
         </Typography>
         <Button
           variant="contained"
@@ -34,13 +61,20 @@ const ChartViewer = () => {
           sx={{ mt: 3 }}
           onClick={() => navigate("/upload")}
         >
-           Go Back to Upload
+          Go Back to Upload
         </Button>
       </Box>
     );
   }
 
-  const colors = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"];
+  const colors = [
+    "#FF6384",
+    "#36A2EB",
+    "#FFCE56",
+    "#4BC0C0",
+    "#9966FF",
+    "#FF9F40",
+  ];
 
   const getChartData = () => {
     const xValues = data.map((item) => item[xKey]);
@@ -49,7 +83,9 @@ const ChartViewer = () => {
       const yKey = yKeys[0];
       if (!yKey) return { labels: [], datasets: [] };
 
-      const yValues = data.map((item) => parseFloat(item[yKey])).filter(v => !isNaN(v));
+      const yValues = data
+        .map((item) => parseFloat(item[yKey]))
+        .filter((v) => !isNaN(v));
 
       return {
         labels: xValues.slice(0, yValues.length),
@@ -89,7 +125,9 @@ const ChartViewer = () => {
         label: yKey,
         data: data.map((item) => parseFloat(item[yKey])),
         backgroundColor:
-          chartType === "Area" ? `${colors[i % colors.length]}88` : colors[i % colors.length],
+          chartType === "Area"
+            ? `${colors[i % colors.length]}88`
+            : colors[i % colors.length],
         borderColor: colors[i % colors.length],
         fill: chartType === "Area",
         tension: chartType === "Area" ? 0.4 : 0.3,
@@ -134,99 +172,135 @@ const ChartViewer = () => {
     (chartType === "Pie" || chartType === "Scatter") && yKeys.length > 1;
 
   return (
-    <Box sx={{ display: "flex", height: "83vh", overflow: "hidden", bgcolor: "#eef1f6",pt:5}}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "83vh",
+        overflow: "hidden",
+        bgcolor: "#eef1f6",
+        pt: 5,
+      }}
+    >
       {/* Sidebar */}
       <Box
         sx={{
           width: 320,
-          height:536,
+          height: 536,
           backgroundColor: "#ffffff",
           p: 3,
           overflowY: "auto",
           borderRight: "1px solid #ccc",
-          marginLeft:2,
-          marginTop:2,
-          borderRadius: 3, boxShadow: 3 
+          marginLeft: 2,
+          marginTop: 2,
+          borderRadius: 3,
+          boxShadow: 3,
         }}
       >
         <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
           🎛 Controls
         </Typography>
-<FormControl fullWidth sx={{ mb: 2 }}>
-  <InputLabel shrink={true}>X-Axis</InputLabel>
-  <Select
-    value={xKey}
-    onChange={(e) => setXKey(e.target.value)}
-    label="X-Axis"
-  >
-    {columns.map((col) => (
-      <MenuItem key={col} value={col}>
-        {col}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel shrink={true} sx={{ color: "#000" }}>
+            X-Axis
+          </InputLabel>
+          <Select
+            value={xKey}
+            onChange={(e) => setXKey(e.target.value)}
+            label="X-Axis"
+            sx={{ color: "#000", backgroundColor: "#fff" }}
+          >
+            {columns.map((col) => (
+              <MenuItem key={col} value={col} sx={{ color: "#000" }}>
+                {col}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-<FormControl fullWidth sx={{ mb: 2 }}>
-  <InputLabel shrink={true}>Y-Axis (Multi Select)</InputLabel>
-  <Select
-    multiple
-    value={yKeys}
-    onChange={(e) => setYKeys(e.target.value)}
-    renderValue={(selected) => selected.join(", ")}
-    label="Y-Axis (Multi Select)"
-  >
-    {columns.map((col) => (
-      <MenuItem key={col} value={col}>
-        {col}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel shrink={true} sx={{ color: "#000" }}>
+            Y-Axis (Multi Select)
+          </InputLabel>
+          <Select
+            multiple
+            value={yKeys}
+            onChange={(e) => setYKeys(e.target.value)}
+            renderValue={(selected) => selected.join(", ")}
+            label="Y-Axis (Multi Select)"
+            sx={{ color: "#000", backgroundColor: "#fff" }}
+          >
+            {columns.map((col) => (
+              <MenuItem key={col} value={col} sx={{ color: "#000" }}>
+                {col}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-<FormControl fullWidth sx={{ mb: 2 }}>
-  <InputLabel shrink={true}>Chart Type</InputLabel>
-  <Select
-    value={chartType}
-    onChange={(e) => setChartType(e.target.value)}
-    label="Chart Type"
-  >
-    <MenuItem value="Bar">Bar Chart</MenuItem>
-    <MenuItem value="Column">Column Chart</MenuItem>
-    <MenuItem value="Line">Line Chart</MenuItem>
-    <MenuItem value="Area">Area Chart</MenuItem>
-    <MenuItem value="Pie">Pie Chart</MenuItem>
-    <MenuItem value="Scatter">Scatter Chart</MenuItem>
-  </Select>
-</FormControl>
-
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel shrink={true} sx={{ color: "#000" }}>
+            Chart Type
+          </InputLabel>
+          <Select
+            value={chartType}
+            onChange={(e) => setChartType(e.target.value)}
+            label="Chart Type"
+            sx={{ color: "#000", backgroundColor: "#fff" }}
+          >
+            <MenuItem value="Bar" sx={{ color: "#000" }}>
+              Bar Chart
+            </MenuItem>
+            <MenuItem value="Column" sx={{ color: "#000" }}>
+              Column Chart
+            </MenuItem>
+            <MenuItem value="Line" sx={{ color: "#000" }}>
+              Line Chart
+            </MenuItem>
+            <MenuItem value="Area" sx={{ color: "#000" }}>
+              Area Chart
+            </MenuItem>
+            <MenuItem value="Pie" sx={{ color: "#000" }}>
+              Pie Chart
+            </MenuItem>
+            <MenuItem value="Scatter" sx={{ color: "#000" }}>
+              Scatter Chart
+            </MenuItem>
+          </Select>
+        </FormControl>
 
         <Typography
-  variant="subtitle1"
-  gutterBottom
-  sx={{ mt: 3, display: "flex", alignItems: "center", gap: 1 }}
->
-  <ArrowCircleDownIcon />
-  Download
-</Typography>
+          variant="subtitle1"
+          gutterBottom
+          sx={{ mt: 3, display: "flex", alignItems: "center", gap: 1 }}
+        >
+          <ArrowCircleDownIcon />
+          Download
+        </Typography>
 
-        <Button fullWidth variant="outlined" onClick={handleDownloadPNG} sx={{ mb: 1 }}>
-          <ImageIcon/> Download PNG
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={handleDownloadPNG}
+          sx={{ mb: 1 }}
+        >
+          <ImageIcon /> Download PNG
         </Button>
         <Button fullWidth variant="outlined" onClick={handleDownloadPDF}>
-          <PictureAsPdfIcon/>Download PDF
+          <PictureAsPdfIcon />
+          Download PDF
         </Button>
       </Box>
 
       {/* Chart Area */}
-      <Box sx={{ flex: 2, overflow: "auto", p:2,pt:0 }}>
+      <Box sx={{ flex: 2, overflow: "auto", p: 2, pt: 0 }}>
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
           📊 Chart Viewer
         </Typography>
 
         {showSingleOnlyWarning && (
           <Typography color="error" sx={{ mb: 2 }}>
-            <WarningIcon/> {chartType} chart supports only one Y-axis. Showing only the first selected column.
+            <WarningIcon /> {chartType} chart supports only one Y-axis. Showing
+            only the first selected column.
           </Typography>
         )}
 
@@ -235,14 +309,26 @@ const ChartViewer = () => {
           sx={{ p: 3, backgroundColor: "#fff", borderRadius: 3, boxShadow: 3 }}
         >
           {chartType === "Bar" && (
-            <Bar data={getChartData()} options={{ ...options, indexAxis: "y" }} />
+            <Bar
+              data={getChartData()}
+              options={{ ...options, indexAxis: "y" }}
+            />
           )}
           {chartType === "Column" && (
-            <Bar data={getChartData()} options={{ ...options, indexAxis: "x" }} />
+            <Bar
+              data={getChartData()}
+              options={{ ...options, indexAxis: "x" }}
+            />
           )}
-          {chartType === "Line" && <Line data={getChartData()} options={options} />}
-          {chartType === "Area" && <Line data={getChartData()} options={options} />}
-          {chartType === "Pie" && <Pie data={getChartData()} options={options} />}
+          {chartType === "Line" && (
+            <Line data={getChartData()} options={options} />
+          )}
+          {chartType === "Area" && (
+            <Line data={getChartData()} options={options} />
+          )}
+          {chartType === "Pie" && (
+            <Pie data={getChartData()} options={options} />
+          )}
           {chartType === "Scatter" && (
             <Line
               data={getChartData()}
