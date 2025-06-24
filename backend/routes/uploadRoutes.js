@@ -111,8 +111,8 @@ router.get(
 );
 
 
-router.delete(
-  "/file/:id",
+router.post(
+  "/files/:id",
   safeHandler(async (req, res) => {
     const record = await ExcelRecord.findById(req.params.id);
     if (!record) {

@@ -25,9 +25,10 @@ export default function AuthForm() {
       localStorage.setItem("token", token);
       localStorage.setItem("name", JSON.stringify(response.data.user.name));
       localStorage.setItem("id", JSON.stringify(response.data.user.id));
+      localStorage.setItem("role", JSON.stringify(response.data.user.role));
       if (token) {
         if (response.data.user.role === "admin") {
-          navigate("/dashboard", { state: { user: response.data.user } });
+          navigate("/admin", { state: { user: response.data.user } });
         } else {
           navigate("/dashboard", { state: { user: response.data.user } });
         }

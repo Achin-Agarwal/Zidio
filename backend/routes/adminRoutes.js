@@ -56,7 +56,7 @@ router.get(
   })
 );
 
-router.delete(
+router.post(
   "/delete/:id",
   safeHandler(async (req, res) => {
     const record = await User.findById(req.params.id);

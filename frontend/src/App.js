@@ -18,6 +18,7 @@ import Calendar from "./scenes/calendar";
 import AuthForm from "./AuthForm";
 import Upload from './components/Upload';
 import ChartViewer from './components/ChartViewer';
+import AdminDashboard from "./AdminDashboard";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -37,6 +38,7 @@ function App() {
             <Routes>
               <Route path="/" element={<AuthForm />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />

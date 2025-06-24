@@ -15,6 +15,8 @@ import {
   Divider,
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom";
 
 const Upload = () => {
@@ -34,10 +36,13 @@ const Upload = () => {
       if (!token) return;
       try {
         const userId = JSON.parse(localStorage.getItem("id"));
-        console.log(userId)
-        const res = await axios.get(`http://localhost:5000/upload/myfiles/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        console.log(userId);
+        const res = await axios.get(
+          `http://localhost:5000/upload/myfiles/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         console.log("Upload history fetched:", res.data);
         setHistory(res.data || []);
       } catch (error) {
@@ -48,68 +53,90 @@ const Upload = () => {
     fetchHistory();
   }, [token]);
 
+  const handleDeleteFile = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this file?")) return;
+    try {
+      const response = await axios.post(`http://localhost:5000/upload/files/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUploadMsg(response.data.message);
+      setHistory(history.filter((file) => file._id !== id));
+    } catch (error) {
+      console.error("Failed to delete file:", error);
+      setUploadMsg(error.response?.data?.error || "Failed to delete file");
+    }
+  };
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
   const handleUpload = async () => {
-  if (!file) return alert("Please choose a file");
+    if (!file) return alert("Please choose a file");
 
-  const formData = new FormData();
-  formData.append("file", file);
+    const formData = new FormData();
+    formData.append("file", file);
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const res = await axios.post("http://localhost:5000/upload/upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const res = await axios.post(
+        "http://localhost:5000/upload/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const { message, record } = res.data;
+      const { message, record } = res.data;
 
-    const parsedData = record?.data || [];
-    const parsedColumns = parsedData.length > 0 ? Object.keys(parsedData[0]) : [];
+      const parsedData = record?.data || [];
+      const parsedColumns =
+        parsedData.length > 0 ? Object.keys(parsedData[0]) : [];
 
-    setUploadMsg(message);
+      setUploadMsg(message);
 
-    navigate("/chart", { state: { data: parsedData, columns: parsedColumns } });
-    const userId = JSON.parse(localStorage.getItem("id"));
+      navigate("/chart", {
+        state: { data: parsedData, columns: parsedColumns },
+      });
+      const userId = JSON.parse(localStorage.getItem("id"));
 
-    const updated = await axios.get(`http://localhost:5000/upload/myfiles/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      const updated = await axios.get(
+        `http://localhost:5000/upload/myfiles/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    setHistory(updated.data || []);
-  } catch (error) {
-    console.error("Upload failed:", error);
-    setUploadMsg("Upload failed");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      setHistory(updated.data || []);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      setUploadMsg("Upload failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleHistoryClick = (entry) => {
-  const data = entry.data || [];
-  const columns = data.length > 0 ? Object.keys(data[0]) : [];
+    const data = entry.data || [];
+    const columns = data.length > 0 ? Object.keys(data[0]) : [];
 
-  if (data.length === 0 || columns.length === 0) {
-    alert("No data available for this file.");
-    return;
-  }
+    if (data.length === 0 || columns.length === 0) {
+      alert("No data available for this file.");
+      return;
+    }
 
-  navigate("/chart", { state: { data, columns } });
-};
-
+    navigate("/chart", { state: { data, columns } });
+  };
 
   // const handleClearHistory = async () => {
   //   if (!window.confirm("Are you sure you want to clear your upload history?")) return;
 
   //   try {
-  //     setBackupHistory(history); 
+  //     setBackupHistory(history);
   //     await axios.delete("http://localhost:5000/api/upload/history", {
   //       headers: { Authorization: `Bearer ${token}` },
   //     });
@@ -124,11 +151,15 @@ const Upload = () => {
 
   const handleUndoClear = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/upload/restore", {
-        uploads: backupHistory,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.post(
+        "http://localhost:5000/api/upload/restore",
+        {
+          uploads: backupHistory,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       setHistory(res.data.uploads || backupHistory);
       setBackupHistory([]);
@@ -142,7 +173,9 @@ const Upload = () => {
 
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>📤 Upload Excel File</Typography>
+      <Typography variant="h4" gutterBottom>
+        📤 Upload Excel File
+      </Typography>
 
       <Input
         type="file"
@@ -179,7 +212,9 @@ const Upload = () => {
       {summary && (
         <Card sx={{ mt: 4, backgroundColor: "#f5f5f5" }}>
           <CardContent>
-            <Typography variant="h6" gutterBottom>📊 Upload Summary</Typography>
+            <Typography variant="h6" gutterBottom>
+              📊 Upload Summary
+            </Typography>
             <pre>{JSON.stringify(summary, null, 2)}</pre>
           </CardContent>
         </Card>
@@ -197,12 +232,37 @@ const Upload = () => {
           <List>
             {history.map((entry, index) => (
               <React.Fragment key={entry._id || index}>
-                <ListItem button onClick={() => handleHistoryClick(entry)}>
+                <ListItem
+                  alignItems="flex-start"
+                  secondaryAction={
+                    <Box>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => handleHistoryClick(entry)}
+                        sx={{ mr: 1 }}
+                      >
+                        View
+                      </Button>
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={() => handleDeleteFile(entry._id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  }
+                >
                   <ListItemText
                     primary={`📁 ${entry.fileName || entry._id}`}
                     secondary={
                       <>
-                        <Typography component="span" variant="body2" color="text.primary">
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.primary"
+                        >
                           {new Date(entry.uploadedAt).toLocaleString()}
                         </Typography>
                         <pre style={{ whiteSpace: "pre-wrap" }}>
