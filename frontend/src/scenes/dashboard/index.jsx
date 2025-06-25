@@ -62,6 +62,7 @@ const Dashboard = () => {
           size="large"
           color="primary"
           sx={{ fontWeight: "bold", px: 4, py: 1.5 }}
+          onClick={() => window.location.href = "/upload"}
         >
           GET STARTED
         </Button>
