@@ -31,6 +31,7 @@ router.get(
                 _id: "$_id",
                 data: "$data",
                 uploadedAt: "$uploadedAt",
+                fileName: "$fileName", // ✅ Added this line
               },
             },
           },

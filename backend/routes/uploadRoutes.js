@@ -30,6 +30,7 @@ router.post(
       const record = await ExcelRecord.create({
         data: jsonData,
         uploadedBy: req.user.id,
+        fileName: req.file.originalname,
       });
 
       res.status(201).json({ message: "File uploaded and processed", record });
@@ -38,6 +39,7 @@ router.post(
     }
   })
 );
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -82,28 +84,33 @@ router.get(
     }
     res.json({
       id: file._id,
+      fileName: file.fileName,
       data: file.data,
       uploadedAt: file.uploadedAt,
     });
   })
 );
 
+
 router.get(
   "/myfiles/:id",
   safeHandler(async (req, res) => {
     try {
       const userId = req.params.id;
-      const records = await ExcelRecord.find({ uploadedBy: userId }).sort({ uploadedAt: -1 });
-      if (!records) {
-        return res.status(404).json({ error: "File not found" });
+      const records = await ExcelRecord.find({ uploadedBy: userId })
+        .sort({ uploadedAt: -1 })
+        .select("data uploadedAt fileName");
+
+      if (!records || records.length === 0) {
+        return res.status(404).json({ error: "No files found" });
       }
+
       res.status(200).json(records);
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
   })
 );
-
 
 router.post(
   "/files/:id",
@@ -112,9 +119,16 @@ router.post(
     if (!record) {
       return res.status(404).json({ error: "File not found" });
     }
+
+    const deletedFileName = record.fileName;
     await ExcelRecord.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "File deleted successfully" });
+
+    res.status(200).json({
+      message: "File deleted successfully",
+      deletedFileName,
+    });
   })
 );
+
 
 export default router;

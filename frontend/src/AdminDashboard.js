@@ -216,7 +216,13 @@ const AdminDashboard = () => {
                     }
                   >
                     <ListItemText
-                      primary={`📁 File ID: ${record._id}`}
+                      primary={
+                        <>
+                          <span style={{ color: "#000", fontWeight: "bold" }}>
+                            📁 {record.fileName || "Unnamed File"}
+                          </span>
+                        </>
+                      }
                       secondary={`🕒 Uploaded at: ${new Date(
                         record.uploadedAt
                       ).toLocaleString()}`}

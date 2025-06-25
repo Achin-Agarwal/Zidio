@@ -14,7 +14,12 @@ const excelRecordSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  fileName: {
+    type: String,
+    required: true,
+  },
 });
+
 
 const ExcelRecord = mongoose.model('ExcelRecord', excelRecordSchema);
 

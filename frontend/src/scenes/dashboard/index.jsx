@@ -106,7 +106,9 @@ const UserDashboard = () => {
               sx={{ fontSize: 40, color: "#1976d2", mr: 2 }}
             />
             <Box>
-              <Typography variant="subtitle1" color="black">Total Files</Typography>
+              <Typography variant="subtitle1" color="black">
+                Total Files
+              </Typography>
               <Typography variant="h5" fontWeight={700} color="black">
                 {totalFiles}
               </Typography>
@@ -129,7 +131,9 @@ const UserDashboard = () => {
               sx={{ fontSize: 40, color: "#2e7d32", mr: 2 }}
             />
             <Box>
-              <Typography variant="subtitle1" color="black">Total Rows</Typography>
+              <Typography variant="subtitle1" color="black">
+                Total Rows
+              </Typography>
               <Typography variant="h5" fontWeight={700} color="black">
                 {totalRows}
               </Typography>
@@ -152,7 +156,9 @@ const UserDashboard = () => {
               sx={{ fontSize: 40, color: "#ed6c02", mr: 2 }}
             />
             <Box>
-              <Typography variant="subtitle1" color="black">Last Uploaded</Typography>
+              <Typography variant="subtitle1" color="black">
+                Last Uploaded
+              </Typography>
               <Typography variant="h6" fontWeight={700} color="black">
                 {latestUploadFormatted}
               </Typography>
@@ -191,7 +197,11 @@ const UserDashboard = () => {
                   }
                 >
                   <ListItemText
-                    primary={`📁 File ID: ${record._id}`}
+                    primary={
+                      <span style={{ color: "#000", fontWeight: 600 }}>
+                        📄 {record.fileName || "Unnamed File"}
+                      </span>
+                    }
                     secondary={`🕒 Uploaded at: ${new Date(
                       record.uploadedAt
                     ).toLocaleString()}`}
