@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Box,
   Typography,
@@ -18,26 +17,48 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 
+// Mock Data
+const mockUsersData = [
+  {
+    user: { _id: "u1", name: "Alice", email: "alice@example.com" },
+    records: [
+      {
+        _id: "f101",
+        uploadedAt: new Date().toISOString(),
+        data: [{ col1: "Value1", col2: "Value2" }],
+      },
+    ],
+  },
+  {
+    user: { _id: "u2", name: "Bob", email: "bob@example.com" },
+    records: [
+      {
+        _id: "f102",
+        uploadedAt: new Date().toISOString(),
+        data: [{ col1: "Data1", col2: "Data2" }],
+      },
+      {
+        _id: "f103",
+        uploadedAt: new Date().toISOString(),
+        data: [{ col1: "Sample1", col2: "Sample2" }],
+      },
+    ],
+  },
+];
+
 const AdminDashboard = () => {
   const [usersData, setUsersData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const fetchAuditData = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get("http://localhost:5000/admin/audit", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsersData(res.data || []);
-    } catch (error) {
-      console.error("Failed to fetch audit data:", error);
-      setMsg("Failed to fetch data");
-    } finally {
+    setLoading(true);
+    // Simulate API delay
+    setTimeout(() => {
+      setUsersData(mockUsersData);
       setLoading(false);
-    }
+    }, 1000);
   };
 
   useEffect(() => {
@@ -51,41 +72,27 @@ const AdminDashboard = () => {
     navigate("/chart", { state: { data, columns } });
   };
 
-  const handleDeleteFile = async (fileId) => {
-    console.log("Deleting file with ID:", fileId);
+  const handleDeleteFile = (fileId) => {
     if (!window.confirm("Delete this file?")) return;
-
-    try {
-      await axios.post(`http://localhost:5000/upload/files/${fileId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setMsg("File deleted");
-      fetchAuditData();
-    } catch (error) {
-      console.error("Failed to delete file:", error);
-      setMsg("Failed to delete file");
-    }
+    setUsersData((prevData) =>
+      prevData.map((userBlock) => ({
+        ...userBlock,
+        records: userBlock.records.filter((r) => r._id !== fileId),
+      }))
+    );
+    setMsg("File deleted");
   };
 
-  const handleDeleteUser = async (userId) => {
+  const handleDeleteUser = (userId) => {
     if (!window.confirm("Delete this user and all their files?")) return;
-
-    try {
-      await axios.post(`http://localhost:5000/admin/delete/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setMsg("User deleted");
-      fetchAuditData();
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-      setMsg("Failed to delete user");
-    }
+    setUsersData((prevData) => prevData.filter((u) => u.user._id !== userId));
+    setMsg("User deleted");
   };
 
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" gutterBottom>
-        🛠 Admin Dashboard (All User Uploads)
+        🛠 Admin Dashboard (Frontend Only)
       </Typography>
 
       {msg && (
