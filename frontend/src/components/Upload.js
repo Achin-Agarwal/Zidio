@@ -77,7 +77,7 @@ const Upload = () => {
         `http://localhost:5000/upload/download/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
-          responseType: "blob", // Important to download file
+          responseType: "blob", 
         }
       );
 
@@ -159,23 +159,6 @@ const Upload = () => {
     navigate("/chart", { state: { data, columns } });
   };
 
-  // const handleClearHistory = async () => {
-  //   if (!window.confirm("Are you sure you want to clear your upload history?")) return;
-
-  //   try {
-  //     setBackupHistory(history);
-  //     await axios.delete("http://localhost:5000/api/upload/history", {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     setHistory([]);
-  //     setShowUndo(true);
-  //     setUploadMsg("Upload history cleared successfully. You can undo this.");
-  //   } catch (error) {
-  //     console.error("Failed to clear history:", error);
-  //     setUploadMsg("Failed to clear history");
-  //   }
-  // };
-
   const handleUndoClear = async () => {
     try {
       const res = await axios.post(
@@ -199,128 +182,120 @@ const Upload = () => {
   };
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        📤 Upload Excel File
-      </Typography>
+    <Box sx={{ p: 4, color: "black", minHeight: "100vh" }}>
+  <Typography variant="h4" gutterBottom>
+    📤 Upload Excel File
+  </Typography>
 
-      <Input
-        type="file"
-        inputProps={{ accept: ".xlsx,.xls" }}
-        onChange={handleFileChange}
-        sx={{ mb: 2 }}
-      />
+  <Input
+    type="file"
+    inputProps={{ accept: ".xlsx,.xls" }}
+    onChange={handleFileChange}
+    sx={{ mb: 2 }}
+  />
 
-      <Button
-        variant="contained"
-        startIcon={<UploadFileIcon />}
-        onClick={handleUpload}
-        disabled={loading}
-      >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Upload"}
-      </Button>
+  <Button
+    variant="contained"
+    startIcon={<UploadFileIcon />}
+    onClick={handleUpload}
+    disabled={loading}
+  >
+    {loading ? <CircularProgress size={24} color="inherit" /> : "Upload"}
+  </Button>
 
-      {uploadMsg && (
-        <Box mt={2}>
-          <Alert severity={uploadMsg.includes("fail") ? "error" : "success"}>
-            {uploadMsg}
-          </Alert>
-        </Box>
-      )}
-
-      {showUndo && (
-        <Box mt={2}>
-          <Button variant="outlined" color="primary" onClick={handleUndoClear}>
-            Undo Clear History
-          </Button>
-        </Box>
-      )}
-
-      {summary && (
-        <Card sx={{ mt: 4, backgroundColor: "#f5f5f5" }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              📊 Upload Summary
-            </Typography>
-            <pre>{JSON.stringify(summary, null, 2)}</pre>
-          </CardContent>
-        </Card>
-      )}
-
-      {history.length > 0 && (
-        <Box mt={6}>
-          {/* <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Typography variant="h5" gutterBottom>🕓 Upload History</Typography>
-            <Button variant="outlined" color="error" onClick={handleClearHistory}>
-              Clear History
-            </Button>
-          </Box> */}
-
-          <List>
-            {history.map((entry, index) => (
-              <React.Fragment key={entry._id || index}>
-                <ListItem
-                  alignItems="flex-start"
-                  secondaryAction={
-                    <Box>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => handleHistoryClick(entry)}
-                        sx={{ mr: 1 }}
-                      >
-                        View
-                      </Button>
-
-                      <IconButton
-                        edge="end"
-                        aria-label="download"
-                        onClick={() =>
-                          handleDownloadFile(
-                            entry._id,
-                            entry.fileName || "export.xlsx"
-                          )
-                        }
-                        sx={{ mr: 1 }}
-                      >
-                        <DownloadIcon />
-                      </IconButton>
-
-                      <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        onClick={() => handleDeleteFile(entry._id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  }
-                >
-                  <ListItemText
-                    primary={`📁 ${entry.fileName || entry._id}`}
-                    secondary={
-                      <>
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                          {new Date(entry.uploadedAt).toLocaleString()}
-                        </Typography>
-                        <pre style={{ whiteSpace: "pre-wrap" }}>
-                          {JSON.stringify(entry.summary, null, 2)}
-                        </pre>
-                      </>
-                    }
-                  />
-                </ListItem>
-                <Divider component="li" />
-              </React.Fragment>
-            ))}
-          </List>
-        </Box>
-      )}
+  {uploadMsg && (
+    <Box mt={2}>
+      <Alert severity={uploadMsg.includes("fail") ? "error" : "success"}>
+        {uploadMsg}
+      </Alert>
     </Box>
+  )}
+
+  {showUndo && (
+    <Box mt={2}>
+      <Button variant="outlined" color="primary" onClick={handleUndoClear}>
+        Undo Clear History
+      </Button>
+    </Box>
+  )}
+
+  {summary && (
+    <Card sx={{ mt: 4, backgroundColor: "#fff", color: "black" }}>
+      <CardContent>
+        <Typography variant="h6" gutterBottom>
+          📊 Upload Summary
+        </Typography>
+        <pre>{JSON.stringify(summary, null, 2)}</pre>
+      </CardContent>
+    </Card>
+  )}
+
+  {history.length > 0 && (
+    <Box mt={6}>
+      <List>
+        {history.map((entry, index) => (
+          <React.Fragment key={entry._id || index}>
+            <ListItem
+              alignItems="flex-start"
+              secondaryAction={
+                <Box>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => handleHistoryClick(entry)}
+                    sx={{ mr: 1 }}
+                  >
+                    View
+                  </Button>
+
+                  <IconButton
+  edge="end"
+  aria-label="download"
+  onClick={() =>
+    handleDownloadFile(entry._id, entry.fileName || "export.xlsx")
+  }
+  sx={{ mr: 1, color: "black" }} 
+>
+  <DownloadIcon />
+</IconButton>
+
+<IconButton
+  edge="end"
+  aria-label="delete"
+  onClick={() => handleDeleteFile(entry._id)}
+  sx={{ color: "black" }}
+>
+  <DeleteIcon />
+</IconButton>
+                </Box>
+              }
+            >
+              <ListItemText
+                primary={`📁 ${entry.fileName || entry._id}`}
+                secondary={
+                  <>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {new Date(entry.uploadedAt).toLocaleString()}
+                    </Typography>
+                    <pre style={{ whiteSpace: "pre-wrap", color: "black" }}>
+                      {JSON.stringify(entry.summary, null, 2)}
+                    </pre>
+                  </>
+                }
+              />
+            </ListItem>
+            <Divider component="li" />
+          </React.Fragment>
+        ))}
+      </List>
+    </Box>
+  )}
+</Box>
+
   );
 };
 
