@@ -1,75 +1,214 @@
-import { Box, Button, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Divider,
+  Paper,
+  CircularProgress,
+  Alert,
+  Tooltip,
+  Grid,
+} from "@mui/material";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
-  // const theme = useTheme();
+const UserDashboard = () => {
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
+  const fetchUserFiles = async () => {
+    try {
+      setLoading(true);
+      const userId = JSON.parse(localStorage.getItem("id"));
+      const res = await axios.get(
+        `http://localhost:5000/upload/myfiles/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setHistory(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch files:", error);
+      setMsg("Failed to fetch file history");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserFiles();
+  }, []);
+
+  const handleViewFile = (record) => {
+    const data = record.data || [];
+    const columns = data.length > 0 ? Object.keys(data[0]) : [];
+    if (!data.length || !columns.length) return alert("No data available");
+    navigate("/chart", { state: { data, columns } });
+  };
+
+  const totalFiles = history.length;
+  const totalRows = history.reduce(
+    (sum, file) => sum + (file.data?.length || 0),
+    0
+  );
+  const latestUpload = history
+    .map((file) => new Date(file.uploadedAt))
+    .sort((a, b) => b - a)[0];
+  const latestUploadFormatted = latestUpload
+    ? latestUpload.toLocaleString()
+    : "N/A";
 
   return (
     <Box
-      m="40px"
-      p="40px"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      textAlign="center"
       sx={{
-        minHeight: "calc(100vh - 100px)",
+        p: 4,
+        backgroundColor: "#f5f7fa",
+        minHeight: "100vh",
+        color: "#000",
       }}
     >
-      {/* Title */}
-      <Typography variant="h2" fontWeight="bold" gutterBottom>
-        <img
-          src="https://img.icons8.com/color/48/ms-excel.png"
-          alt="Excel Icon"
-          style={{ verticalAlign: "middle", marginRight: "10px" }}
-        />
-        Excel Analytics Platform
+      <Typography variant="h4" fontWeight={600} gutterBottom>
+        📁 My Dashboard
       </Typography>
 
-      {/* Subtitle */}
-      <Typography
-        variant="h6"
-        color="textSecondary"
-        maxWidth="700px"
-        mt={2}
-      >
-        Welcome! Upload your Excel files and get real-time insights with summaries and interactive visualizations.
-      </Typography>
-
-      {/* Features */}
-      <Box mt={5} textAlign="left" maxWidth="500px">
-        <Typography variant="h6" gutterBottom>
-          🔍 Features:
-        </Typography>
-        <ul style={{ fontSize: "1.15rem", lineHeight: "2" }}>
-          <li>Secure authentication</li>
-          <li>Excel file uploads</li>
-          <li>Smart summaries & visual charts</li>
-        </ul>
-      </Box>
-
-      {/* Buttons */}
-      <Box
-        mt={6}
-        display="flex"
-        flexDirection={{ xs: "column", sm: "row" }}
-        gap={3}
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Button
-          variant="contained"
-          size="large"
-          color="primary"
-          sx={{ fontWeight: "bold", px: 4, py: 1.5 }}
-          onClick={() => window.location.href = "/upload"}
+      {msg && (
+        <Alert
+          severity={msg.includes("Failed") ? "error" : "success"}
+          sx={{ mb: 2 }}
         >
-          GET STARTED
-        </Button>
+          {msg}
+        </Alert>
+      )}
 
-      </Box>
+      {/* Summary Card */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
+          <Paper
+            elevation={3}
+            sx={{
+              p: 3,
+              display: "flex",
+              alignItems: "center",
+              backgroundColor: "#fff",
+              borderLeft: "6px solid #1976d2",
+            }}
+          >
+            <InsertDriveFileIcon
+              sx={{ fontSize: 40, color: "#1976d2", mr: 2 }}
+            />
+            <Box>
+              <Typography variant="subtitle1" color="black">Total Files</Typography>
+              <Typography variant="h5" fontWeight={700} color="black">
+                {totalFiles}
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={4}>
+          <Paper
+            elevation={3}
+            sx={{
+              p: 3,
+              display: "flex",
+              alignItems: "center",
+              backgroundColor: "#fff",
+              borderLeft: "6px solid #2e7d32",
+            }}
+          >
+            <InsertDriveFileIcon
+              sx={{ fontSize: 40, color: "#2e7d32", mr: 2 }}
+            />
+            <Box>
+              <Typography variant="subtitle1" color="black">Total Rows</Typography>
+              <Typography variant="h5" fontWeight={700} color="black">
+                {totalRows}
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={4}>
+          <Paper
+            elevation={3}
+            sx={{
+              p: 3,
+              display: "flex",
+              alignItems: "center",
+              backgroundColor: "#fff",
+              borderLeft: "6px solid #ed6c02",
+            }}
+          >
+            <InsertDriveFileIcon
+              sx={{ fontSize: 40, color: "#ed6c02", mr: 2 }}
+            />
+            <Box>
+              <Typography variant="subtitle1" color="black">Last Uploaded</Typography>
+              <Typography variant="h6" fontWeight={700} color="black">
+                {latestUploadFormatted}
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Upload History */}
+      <Typography variant="h6" fontWeight={600} gutterBottom>
+        🕓 Upload History
+      </Typography>
+
+      {loading ? (
+        <CircularProgress />
+      ) : history.length === 0 ? (
+        <Typography>No upload history found.</Typography>
+      ) : (
+        <Paper
+          sx={{ p: 2, backgroundColor: "#fff", borderRadius: 3, boxShadow: 2 }}
+        >
+          <List>
+            {history.map((record) => (
+              <React.Fragment key={record._id}>
+                <ListItem
+                  secondaryAction={
+                    <Tooltip title="View File">
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleViewFile(record)}
+                        sx={{ color: "#1976d2" }}
+                      >
+                        <VisibilityIcon />
+                      </IconButton>
+                    </Tooltip>
+                  }
+                >
+                  <ListItemText
+                    primary={`📁 File ID: ${record._id}`}
+                    secondary={`🕒 Uploaded at: ${new Date(
+                      record.uploadedAt
+                    ).toLocaleString()}`}
+                    primaryTypographyProps={{
+                      sx: { color: "#000", fontWeight: 500 },
+                    }}
+                    secondaryTypographyProps={{ sx: { color: "#000" } }}
+                  />
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            ))}
+          </List>
+        </Paper>
+      )}
     </Box>
   );
 };
 
-export default Dashboard;
+export default UserDashboard;
