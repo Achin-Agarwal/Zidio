@@ -1,7 +1,7 @@
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 const Dashboard = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
 
   return (
     <Box
@@ -67,27 +67,6 @@ const Dashboard = () => {
           GET STARTED
         </Button>
 
-        <Button
-          variant="outlined"
-          size="large"
-          sx={{
-            fontWeight: "bold",
-            px: 4,
-            py: 1.5,
-            color: theme.palette.mode === "dark" ? "#fff" : theme.palette.primary.main,
-            borderColor: theme.palette.mode === "dark" ? "#fff" : theme.palette.primary.main,
-            "&:hover": {
-              backgroundColor: theme.palette.mode === "dark"
-                ? "rgba(255,255,255,0.1)"
-                : "rgba(0,0,0,0.04)",
-              borderColor: theme.palette.mode === "dark"
-                ? "#fff"
-                : theme.palette.primary.dark,
-            },
-          }}
-        >
-          UPLOAD NOW
-        </Button>
       </Box>
     </Box>
   );
