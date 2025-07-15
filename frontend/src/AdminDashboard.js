@@ -20,6 +20,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import PeopleIcon from "@mui/icons-material/People";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { useNavigate } from "react-router-dom";
+import { url } from "./url";
 
 const AdminDashboard = () => {
   const [usersData, setUsersData] = useState([]);
@@ -31,7 +32,7 @@ const AdminDashboard = () => {
   const fetchAuditData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/admin/audit", {
+      const res = await axios.get(url+"admin/audit", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsersData(res.data || []);
@@ -57,7 +58,7 @@ const AdminDashboard = () => {
   const handleDeleteFile = async (fileId) => {
     if (!window.confirm("Delete this file?")) return;
     try {
-      await axios.post(`http://localhost:5000/upload/files/${fileId}`, {
+      await axios.post(url+`upload/files/${fileId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMsg("File deleted");
@@ -71,7 +72,7 @@ const AdminDashboard = () => {
   const handleDeleteUser = async (userId) => {
     if (!window.confirm("Delete this user and all their files?")) return;
     try {
-      await axios.post(`http://localhost:5000/admin/delete/${userId}`, {
+      await axios.post(url+`admin/delete/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMsg("User deleted");

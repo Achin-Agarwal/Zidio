@@ -17,6 +17,7 @@ import {
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
+import { url } from "../../url";
 
 const UserDashboard = () => {
   const [history, setHistory] = useState([]);
@@ -30,7 +31,7 @@ const UserDashboard = () => {
       setLoading(true);
       const userId = JSON.parse(localStorage.getItem("id"));
       const res = await axios.get(
-        `http://localhost:5000/upload/myfiles/${userId}`,
+        url+`upload/myfiles/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
